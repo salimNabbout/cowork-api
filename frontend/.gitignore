@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+.vite/
+
+# Env (NUNCA commitar - apenas .env.example versionado)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
