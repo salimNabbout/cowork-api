@@ -67,9 +67,13 @@ export function TasksPanel({ tasks, busy, error, onCreate, onRefresh }: Props) {
         <ul className="tasks">
           {tasks.map((t) => (
             <li key={t.id}>
-              <strong>#{t.id}</strong> {t.title}
-              {t.description ? ` — ${t.description}` : ""}
-              {t.completed ? " ✓" : ""}
+              <div className="task-head">
+                <strong>#{t.id}</strong> {t.title}
+                {t.completed ? " ✓" : ""}
+              </div>
+              {t.description && (
+                <div className="task-desc">{t.description}</div>
+              )}
             </li>
           ))}
         </ul>
