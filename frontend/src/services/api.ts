@@ -185,7 +185,10 @@ export const getMe = (token: string) =>
   request<User>("/api/v1/users/me", { token });
 
 export const listTasks = (userId: number, token: string) =>
-  request<Task[]>(`/api/v1/users/${userId}/tasks`, { token });
+  // limit=100 e o maximo aceito pelo backend (ver app/routes/tasks.py).
+  // Sem isso, o backend devolve apenas 10 tasks por padrao, escondendo
+  // sinais Manus no painel de Inteligencia de Mercado.
+  request<Task[]>(`/api/v1/users/${userId}/tasks?limit=100`, { token });
 
 export const createTask = (
   userId: number,
