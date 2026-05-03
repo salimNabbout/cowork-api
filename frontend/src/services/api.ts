@@ -198,6 +198,17 @@ export const createTask = (
     token,
   });
 
+export const patchTask = (
+  taskId: number,
+  payload: { title?: string; description?: string; completed?: boolean },
+  token: string,
+) =>
+  request<Task>(`/api/v1/tasks/${taskId}`, {
+    method: "PATCH",
+    body: payload,
+    token,
+  });
+
 // =============================================================
 // Util: extrai 'sub' do JWT (id do user) sem validar assinatura.
 //

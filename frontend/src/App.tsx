@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ApiStatus } from "./components/ApiStatus";
 import { AuthForm } from "./components/AuthForm";
+import { MarketIntelligencePanel } from "./components/MarketIntelligencePanel";
 import { TasksPanel } from "./components/TasksPanel";
 import {
   ApiError,
@@ -10,8 +11,14 @@ import {
   getMe,
   listTasks,
   login,
+  patchTask,
   type Task,
 } from "./services/api";
+import {
+  loadAllStatuses,
+  saveAllStatuses,
+  type MarketStatus,
+} from "./services/marketStatus";
 
 /**
  * Persistencia do access_token: localStorage.
@@ -61,6 +68,8 @@ function clearSession() {
   localStorage.removeItem(USER_ID_KEY);
 }
 
+type TabKey = "mi" | "tasks";
+
 export default function App() {
   const initial = loadSession();
   const [token, setToken] = useState<string | null>(initial.token);
@@ -72,6 +81,28 @@ export default function App() {
 
   const [authError, setAuthError] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
+
+  // Tab inicial: "mi" (Inteligencia de Mercado) - foco do piloto.
+  // O usuario pode trocar pra "tasks" pra ver TODAS as tasks (Manus + outras)
+  // no painel CRUD original.
+  const [tab, setTab] = useState<TabKey>("mi");
+
+  // Status operacional dos sinais Manus (overlay client-side em localStorage).
+  // Ver services/marketStatus.ts para o trade-off.
+  const [statuses, setStatuses] = useState<Record<number, MarketStatus>>(
+    loadAllStatuses(),
+  );
+
+  const handleStatusChange = useCallback(
+    (taskId: number, status: MarketStatus) => {
+      setStatuses((prev) => {
+        const next = { ...prev, [taskId]: status };
+        saveAllStatuses(next);
+        return next;
+      });
+    },
+    [],
+  );
 
   const handleLogout = useCallback(() => {
     clearSession();
@@ -166,6 +197,21 @@ export default function App() {
     }
   }
 
+  async function handleMarkCompleted(taskId: number) {
+    if (!token) return;
+    setTasksError(null);
+    setTasksBusy(true);
+    try {
+      const updated = await patchTask(taskId, { completed: true }, token);
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? updated : t)));
+    } catch (e) {
+      setTasksError(e instanceof Error ? e.message : String(e));
+      if (e instanceof ApiError && e.status === 401) handleLogout();
+    } finally {
+      setTasksBusy(false);
+    }
+  }
+
   return (
     <div className="container">
       <header>
@@ -198,13 +244,46 @@ export default function App() {
       </section>
 
       {token && userId && (
-        <TasksPanel
-          tasks={tasks}
-          busy={tasksBusy}
-          error={tasksError}
-          onCreate={handleCreateTask}
-          onRefresh={refreshTasks}
-        />
+        <>
+          <div className="tabs main-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "mi"}
+              onClick={() => setTab("mi")}
+            >
+              Inteligência de Mercado
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "tasks"}
+              onClick={() => setTab("tasks")}
+            >
+              Tasks (todas)
+            </button>
+          </div>
+
+          {tab === "mi" ? (
+            <MarketIntelligencePanel
+              tasks={tasks}
+              statuses={statuses}
+              onStatusChange={handleStatusChange}
+              onMarkCompleted={handleMarkCompleted}
+              onRefresh={refreshTasks}
+              busy={tasksBusy}
+              error={tasksError}
+            />
+          ) : (
+            <TasksPanel
+              tasks={tasks}
+              busy={tasksBusy}
+              error={tasksError}
+              onCreate={handleCreateTask}
+              onRefresh={refreshTasks}
+            />
+          )}
+        </>
       )}
 
       <footer>
