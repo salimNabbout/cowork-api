@@ -7,9 +7,9 @@ import {
   BASE_URL,
   createTask,
   createUser,
+  getMe,
   listTasks,
   login,
-  parseJwtSub,
   type Task,
 } from "./services/api";
 
@@ -134,15 +134,13 @@ export default function App() {
     setAuthBusy(true);
     try {
       const lr = await login(payload);
-      const sub = parseJwtSub(lr.access_token);
-      if (sub === null) {
-        throw new Error(
-          "Login OK mas nao consegui extrair user id do token (sub ausente).",
-        );
-      }
-      saveSession(lr.access_token, sub);
+      // Pega o user.id pelo endpoint /users/me em vez de decodificar o JWT
+      // manualmente. Mais limpo, menos surface de bug, e o endpoint ja valida
+      // o token.
+      const me = await getMe(lr.access_token);
+      saveSession(lr.access_token, me.id);
       setToken(lr.access_token);
-      setUserId(sub);
+      setUserId(me.id);
     } catch (e) {
       setAuthError(e instanceof Error ? e.message : String(e));
     } finally {

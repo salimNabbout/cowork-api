@@ -177,6 +177,13 @@ export const refresh = (refreshToken: string) =>
     body: { refresh_token: refreshToken },
   });
 
+/**
+ * Retorna o user autenticado pelo JWT enviado em Authorization: Bearer.
+ * Substitui o caminho antigo de decodificar o claim 'sub' do JWT manualmente.
+ */
+export const getMe = (token: string) =>
+  request<User>("/api/v1/users/me", { token });
+
 export const listTasks = (userId: number, token: string) =>
   request<Task[]>(`/api/v1/users/${userId}/tasks`, { token });
 
@@ -193,8 +200,10 @@ export const createTask = (
 
 // =============================================================
 // Util: extrai 'sub' do JWT (id do user) sem validar assinatura.
-// Usamos isso porque a API atual nao tem /users/me e o login nao
-// retorna o user.id - so o token. O 'sub' do JWT contem o id.
+//
+// @deprecated O App.tsx agora usa getMe() (GET /api/v1/users/me) em vez
+// de decodificar o JWT manualmente. Mantida exportada para debug e
+// para clientes externos que ainda nao migraram.
 // =============================================================
 
 export function parseJwtSub(token: string): number | null {
