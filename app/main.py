@@ -14,6 +14,15 @@ app = FastAPI(
     debug=settings.DEBUG,
 )
 
+@app.get("/")
+def root():
+    return {
+        "name": "FastAPI API",
+        "status": "online",
+        "health": "/health",
+        "docs": "/docs",
+    }
+
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)
