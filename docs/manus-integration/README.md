@@ -169,3 +169,90 @@ Esse rascunho **não** está no código. Ele só serve como **âncora de design*
 - nenhum nome real de cliente, prospect ou concorrente da CETEM nos exemplos
 
 Tudo isso vira tarefa nova quando o piloto provar valor.
+
+## Rotina operacional sugerida
+
+Ciclo de uso, do sinal ao primeiro contato comercial:
+
+| Passo | Quem | O que faz |
+|---|---|---|
+| 1 | Manus (automatizado) | Rastreia fontes definidas (sites de empresas-alvo, portais de licitação, LinkedIn, sala de imprensa de concorrentes, diários oficiais com filtros regulatórios) |
+| 2 | Manus | Estrutura a análise no contrato JSON canônico (ver `contract.md`) |
+| 3 | Script/integração | Valida payload → faz `POST /api/v1/users/{user_id}/tasks` no staging com payload serializado em `description` (ver `mapping.md`) |
+| 4 | Time CETEM (analista de inteligência) | Abre o frontend → aba **Inteligência de Mercado** → revisa cards do dia |
+| 5 | Analista | Para cada card, classifica status (`em_análise`, `aprovado`, `descartado`) — overlay client-side persiste em localStorage |
+| 6 | Analista (se útil) | Aprova → vira ação comercial: pesquisa decisores no LinkedIn/Sales Navigator, valida contas via canais privados, prepara abordagem consultiva |
+| 7 | SDR / pré-vendas | Executa próxima ação recomendada (`commercial_action.recommended_next_step`) dentro do SLA sugerido |
+| 8 | Analista | Marca `convertido` quando vira oportunidade real de negócio; ou `descartado` quando não for útil |
+| 9 | (futuro, fora do piloto) | Sinais convertidos viram oportunidades em CRM; dados retornam pra Manus pra fechar o loop e calibrar score |
+
+> **Princípio operacional:** IA aponta o alvo, time comercial valida o tiro. Nenhuma abordagem externa (e-mail, mensagem, ligação) sai sem que um humano da CETEM tenha aprovado o sinal e a próxima ação.
+
+### Como o frontend ajuda nessa rotina
+
+- **Painel resumo no topo** mostra contagem por tipo, alta prioridade, e pendentes — visão de fluxo do dia
+- **Filtros** por tipo, prioridade, setor e busca livre — para focar num segmento
+- **Cards** com badges de tipo + prioridade + score — leitura visual rápida sem precisar abrir cada Markdown
+- **Status dropdown** por card — workflow operacional sem precisar de backend MarketInsight ainda
+- **Botão "Marcar concluída"** — aciona `PATCH /api/v1/tasks/{id}` com `completed=true` quando a ação foi executada
+
+## Piloto CETEM — Inteligência de Mercado
+
+### Duração e foco
+
+- **Duração sugerida:** 1 a 2 semanas de uso real
+- **Segmentos prioritários** (escolher 1 ou 2 pra começar — não mais que isso, pra evitar dispersão):
+  - saneamento
+  - energia
+  - mineração
+  - infraestrutura
+  - manufatura
+  - utilities (operação 24/7)
+
+Recomendação: começar com **2 segmentos** que tenham maior aderência ao portfólio CETEM no momento. Mais segmentos significa mais sinais por dia, e o time precisa conseguir revisar todos sem deixar fila se acumular (se isso virar problema, é um gatilho pra `MarketInsight` com priorização automática).
+
+### Critérios mínimos de qualidade do sinal
+
+Cada sinal Manus que chega na API precisa ter, sem exceção (validado por `validate_payload` em `scripts/smoke_manus_market_intelligence.py`):
+
+| Campo | Por quê |
+|---|---|
+| `evidence.url` + `evidence.source_name` | Sem fonte, não é sinal — é boato |
+| `evidence.captured_at` (ISO 8601) | Para auditoria temporal e SLA |
+| `company.name` + `company.sector` | Sem empresa-alvo, não vira ação |
+| `signal_type` | Define a tag e o tratamento operacional |
+| `evidence.confidence` (`low`/`medium`/`high`) | Separar conjectura de fato |
+| `business_context.relevance_to_cetem` | Justifica por que esse sinal é nosso |
+| `commercial_action.recommended_next_step` (concreto) | "Agendar reunião com Diretor X de Y" — não "estudar oportunidade" |
+| `commercial_action.suggested_owner` | Inteligência / SDR / pré-vendas / executivo / diretoria |
+| `commercial_action.suggested_sla_hours` | Janela máxima pra reagir (24h críticos, 96h normal) |
+| `decision_makers` (≥ 1) | Ao menos um perfil-decisor mapeado |
+
+Sinais sem qualquer um desses **não devem** virar Task. O script de smoke valida e rejeita antes de enviar.
+
+### Métricas do piloto
+
+Ao final das 1-2 semanas, avaliar:
+
+| Métrica | Como medir | Sucesso |
+|---|---|---|
+| Volume diário de sinais | Total Manus criados / dia | Entre 5 e 20/dia (≤5 = Manus calibrar; ≥20 = analista satura) |
+| Taxa de aprovação | `aprovado` / total de revisados | ≥ 30% (se < 10%, sinal muito ruidoso) |
+| Taxa de conversão em oportunidade | `convertido` / `aprovado` | ≥ 20% (sinal aprovado vira oportunidade real) |
+| Tempo médio até primeira ação | `aprovado` → `convertido` ou contato | Idealmente dentro do SLA sugerido |
+| Falsos positivos | `descartado` por motivo "não relevante" | Idealmente < 30% |
+| Cobertura de fontes | Diversidade em `evidence.source_name` | ≥ 5 fontes distintas |
+
+Esses números viram input pra calibrar o Manus E pra justificar (ou não) a evolução pra `MarketInsight`.
+
+### Gatilhos pra encerrar o piloto e evoluir
+
+Se durante o piloto aparecer qualquer um destes, é hora de criar `MarketInsight`:
+
+- Time pede "filtra por empresa X" — Task não suporta com performance
+- Diretoria pede "relatório de sinais por setor no mês" — agregação inviável em texto livre
+- CRM precisa receber sinais aprovados via API — formato Markdown não conversa
+- Analista precisa ver histórico de sinais de uma mesma empresa — sem `company_id` indexado, não rola
+- Score começa a ser questionado e demanda recálculo automático — campo precisa ser estruturado
+
+Lista completa em § Critérios para evolução acima.
