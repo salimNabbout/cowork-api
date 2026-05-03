@@ -11,3 +11,4 @@ psycopg[binary]
 pytest
 httpx
 psycopg2-binary
+ruff
