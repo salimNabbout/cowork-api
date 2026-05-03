@@ -1,0 +1,57 @@
+{
+  "source": "manus",
+  "signal_type": "opportunity",
+  "title": "Saneamento Norte Brasil anuncia nova ETA de 600 L/s",
+  "summary": "A Saneamento Norte Brasil S.A. anunciou em release oficial a construcao de uma nova Estacao de Tratamento de Agua com capacidade de 600 L/s, com inicio previsto para o segundo semestre. O projeto inclui modernizacao do parque SCADA legado das ETAs existentes e integracao de dados em data lake operacional.",
+  "company": {
+    "name": "Saneamento Norte Brasil S.A.",
+    "website": "https://exemplo-saneamento-norte.com.br",
+    "sector": "saneamento",
+    "region": "Brasil / Norte / Belem-PA"
+  },
+  "evidence": {
+    "url": "https://exemplo-saneamento-norte.com.br/sala-de-imprensa/release-2026-04",
+    "source_name": "Sala de imprensa Saneamento Norte Brasil",
+    "published_at": "2026-04-22",
+    "captured_at": "2026-05-03T13:45:00",
+    "confidence": "high"
+  },
+  "business_context": {
+    "pain_detected": "Parque SCADA legado fragmentado; ausencia de visibilidade unificada da operacao; dificuldade de auditoria e compliance regulatorio.",
+    "trigger": "Anuncio publico de CAPEX em modernizacao operacional",
+    "relevance_to_cetem": "Encaixe direto com portfolio: SCADA novo + integracao TI/OT + data lake operacional + dashboards regulatorios. Cliente de saneamento se beneficia de manutencao preditiva em equipamentos criticos (bombas, sopradores, dosadoras).",
+    "related_solutions": [
+      "SCADA",
+      "integracao TI/OT",
+      "data science",
+      "monitoramento operacional",
+      "manutencao preditiva"
+    ]
+  },
+  "commercial_action": {
+    "priority": "high",
+    "recommended_next_step": "Mapear decisores no LinkedIn e Sales Navigator (Diretor de Operacoes, Gerente de Engenharia, Coordenador de Automacao). Preparar abordagem consultiva com cases similares de saneamento. Solicitar reuniao de descoberta em ate 14 dias.",
+    "suggested_owner": "SDR",
+    "suggested_sla_hours": 48
+  },
+  "decision_makers": [
+    {"role": "Diretor de Operacoes", "area": "Operacoes", "reason": "decisor economico em projetos de modernizacao"},
+    {"role": "Gerente de Engenharia", "area": "Engenharia", "reason": "valida arquitetura SCADA e integracao"},
+    {"role": "Coordenador de Automacao", "area": "Automacao", "reason": "valida fornecedor tecnico"}
+  ],
+  "score": {
+    "fit": 24,
+    "urgency": 18,
+    "business_value": 18,
+    "evidence_strength": 15,
+    "accessibility": 12,
+    "total": 87
+  },
+  "tags": [
+    "manus",
+    "inteligencia-mercado",
+    "saneamento",
+    "scada",
+    "expansao-industrial"
+  ]
+}

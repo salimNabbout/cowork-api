@@ -1,0 +1,56 @@
+{
+  "source": "manus",
+  "signal_type": "competitor_move",
+  "title": "Concorrente NorthAuto fecha contrato com cooperativa de energia em SC",
+  "summary": "A NorthAuto Solucoes Industriais (concorrente ficticio) anunciou em release no site corporativo o fechamento de contrato plurianual com Cooperativa Energia Sul (CES) para implantacao de sistema de gestao de ativos e automacao de subestacoes. Valor nao divulgado, prazo 36 meses.",
+  "company": {
+    "name": "Cooperativa Energia Sul (CES)",
+    "website": "https://exemplo-ces.coop.br",
+    "sector": "energia",
+    "region": "Brasil / Sul / SC"
+  },
+  "evidence": {
+    "url": "https://exemplo-northauto.com.br/news/contrato-ces-2026",
+    "source_name": "NorthAuto Solucoes Industriais (sala de imprensa)",
+    "published_at": "2026-04-25",
+    "captured_at": "2026-05-03T13:45:00",
+    "confidence": "high"
+  },
+  "business_context": {
+    "pain_detected": "CES precisava modernizar gestao de ativos e supervisao de subestacoes; precificou e escolheu concorrente.",
+    "trigger": "Contrato fechado com concorrente direto em setor que CETEM atende",
+    "relevance_to_cetem": "Ameaca: NorthAuto ganha case e referencia setorial. Oportunidade: outras cooperativas de energia regionais podem replicar a busca - momento de prospeccao ativa em CES-pares antes que NorthAuto chegue primeiro.",
+    "related_solutions": [
+      "automacao de subestacoes",
+      "gestao de ativos",
+      "monitoramento operacional",
+      "integracao TI/OT"
+    ]
+  },
+  "commercial_action": {
+    "priority": "medium",
+    "recommended_next_step": "Mapear cooperativas de energia comparaveis a CES (porte, regiao, perfil tecnologico) e iniciar prospeccao ativa com narrativa antecipativa. Avaliar se CES tem subsidiarias ou unidades nao cobertas pelo contrato NorthAuto.",
+    "suggested_owner": "inteligencia",
+    "suggested_sla_hours": 96
+  },
+  "decision_makers": [
+    {"role": "Diretor Tecnico CES", "area": "Operacoes", "reason": "decisor que escolheu NorthAuto - referencia para entender por que"},
+    {"role": "Diretores Tecnicos de cooperativas-pares", "area": "Operacoes", "reason": "alvos imediatos pra prospeccao"}
+  ],
+  "score": {
+    "fit": 20,
+    "urgency": 16,
+    "business_value": 14,
+    "evidence_strength": 14,
+    "accessibility": 9,
+    "total": 73
+  },
+  "tags": [
+    "manus",
+    "inteligencia-mercado",
+    "ameaca",
+    "concorrente-NorthAuto",
+    "energia",
+    "cooperativa"
+  ]
+}

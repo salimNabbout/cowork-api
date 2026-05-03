@@ -1,0 +1,58 @@
+{
+  "source": "manus",
+  "signal_type": "regulation",
+  "title": "Nova IN obriga monitoramento continuo de emissoes em plantas industriais SP",
+  "summary": "Instrucao Normativa publicada por orgao ambiental estadual obriga, a partir de jan/2027, a instalacao de sistemas de monitoramento continuo de emissoes atmosfericas (CEMS) em plantas industriais de classe A no estado. Multas iniciais ate 5% do faturamento anual.",
+  "company": {
+    "name": "Multiplas (segmento: industria classe A em SP)",
+    "website": null,
+    "sector": "manufatura",
+    "region": "Brasil / Sudeste / SP"
+  },
+  "evidence": {
+    "url": "https://exemplo-orgao-ambiental-sp.gov.br/diario/2026-04-IN-128",
+    "source_name": "Diario Oficial Estadual SP",
+    "published_at": "2026-04-18",
+    "captured_at": "2026-05-03T13:45:00",
+    "confidence": "high"
+  },
+  "business_context": {
+    "pain_detected": "Plantas industriais SP precisam adequar instrumentacao de monitoramento ambiental ate jan/2027; muitas nao tem SCADA ambiental nem integracao com sistemas regulatorios.",
+    "trigger": "Mudanca regulatoria com prazo definido + sancao pesada",
+    "relevance_to_cetem": "CETEM tem oferta combinada: instrumentacao + SCADA ambiental + integracao com sistemas oficiais + dashboards ESG. Janela de 8 meses ate obrigatoriedade gera demanda concentrada.",
+    "related_solutions": [
+      "SCADA ambiental",
+      "monitoramento operacional",
+      "integracao TI/OT",
+      "dashboards regulatorios",
+      "compliance ESG"
+    ]
+  },
+  "commercial_action": {
+    "priority": "high",
+    "recommended_next_step": "Construir lista de plantas industriais classe A em SP a partir de cadastros publicos. Priorizar setores com maior emissao (ceramica, papel-celulose, quimica). Preparar one-pager 'Compliance IN-128 em 90 dias' como isca de qualificacao.",
+    "suggested_owner": "pre-vendas",
+    "suggested_sla_hours": 96
+  },
+  "decision_makers": [
+    {"role": "Gerente de Meio Ambiente", "area": "ESG/Sustentabilidade", "reason": "responsavel legal pelo compliance"},
+    {"role": "Diretor Industrial", "area": "Operacoes", "reason": "aprova CAPEX de adequacao"},
+    {"role": "Compliance Officer", "area": "Juridico/Compliance", "reason": "valida que solucao cobre exigencias legais"}
+  ],
+  "score": {
+    "fit": 21,
+    "urgency": 22,
+    "business_value": 16,
+    "evidence_strength": 15,
+    "accessibility": 10,
+    "total": 84
+  },
+  "tags": [
+    "manus",
+    "inteligencia-mercado",
+    "regulacao",
+    "esg",
+    "compliance",
+    "monitoramento-ambiental"
+  ]
+}

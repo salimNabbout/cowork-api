@@ -1,0 +1,57 @@
+{
+  "source": "manus",
+  "signal_type": "hiring_signal",
+  "title": "Mineradora Aurora abre vaga de Coordenador de Automacao Industrial",
+  "summary": "Mineradora Aurora Ltda. publicou no LinkedIn vaga senior para Coordenador de Automacao Industrial com foco em SCADA, IIoT e analise de dados operacionais. Texto da vaga menciona projeto greenfield de modernizacao da planta de beneficiamento. Indicio forte de iniciativa em curso ou prevista.",
+  "company": {
+    "name": "Mineradora Aurora Ltda.",
+    "website": "https://exemplo-aurora-mining.com.br",
+    "sector": "mineracao",
+    "region": "Brasil / Sudeste / MG"
+  },
+  "evidence": {
+    "url": "https://www.linkedin.com/jobs/example-aurora-12345",
+    "source_name": "LinkedIn Jobs - Aurora Mining careers",
+    "published_at": "2026-04-30",
+    "captured_at": "2026-05-03T13:45:00",
+    "confidence": "medium"
+  },
+  "business_context": {
+    "pain_detected": "Carencia interna de senioridade em automacao; projeto greenfield exige integrador externo durante fase de implantacao.",
+    "trigger": "Vaga senior com escopo SCADA + IIoT + analytics - sinal de iniciativa de modernizacao",
+    "relevance_to_cetem": "Mineracao demanda alta confiabilidade, manutencao preditiva, analytics de teor e producao. Projeto greenfield e janela de oportunidade para entrar como integrador antes da estrutura interna estar completa.",
+    "related_solutions": [
+      "SCADA",
+      "IIoT",
+      "manutencao preditiva",
+      "data science",
+      "integracao TI/OT"
+    ]
+  },
+  "commercial_action": {
+    "priority": "medium",
+    "recommended_next_step": "Confirmar cenario no LinkedIn da pessoa que esta contratando (provavelmente Diretor Industrial ou Gerente de Engenharia). Marcar conversa exploratoria pra entender escopo do greenfield e janela de RFI/RFQ.",
+    "suggested_owner": "SDR",
+    "suggested_sla_hours": 72
+  },
+  "decision_makers": [
+    {"role": "Diretor Industrial", "area": "Operacoes", "reason": "patrocina o projeto greenfield"},
+    {"role": "Gerente de Engenharia", "area": "Engenharia", "reason": "responde tecnicamente; provavel hiring manager"},
+    {"role": "Coordenador de Automacao (atual)", "area": "Automacao", "reason": "fica saturado; abre porta pra integrador externo"}
+  ],
+  "score": {
+    "fit": 22,
+    "urgency": 14,
+    "business_value": 17,
+    "evidence_strength": 10,
+    "accessibility": 11,
+    "total": 74
+  },
+  "tags": [
+    "manus",
+    "inteligencia-mercado",
+    "mineracao",
+    "hiring-signal",
+    "greenfield"
+  ]
+}

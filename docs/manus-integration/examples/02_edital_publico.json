@@ -1,0 +1,57 @@
+{
+  "source": "manus",
+  "signal_type": "tender",
+  "title": "Prefeitura Metropolitana abre PE para sistema de monitoramento de bombas",
+  "summary": "Edital publicado no portal de compras municipais para contratacao de sistema de telemetria e supervisao (SCADA) das estacoes elevatorias do sistema de drenagem urbana, com integracao a centro de operacoes ja existente. Valor estimado R$ 4,2M. Abertura: 15 dias.",
+  "company": {
+    "name": "Prefeitura Metropolitana Exemplar",
+    "website": "https://compras.exemplar.gov.br",
+    "sector": "infraestrutura",
+    "region": "Brasil / Sudeste"
+  },
+  "evidence": {
+    "url": "https://compras.exemplar.gov.br/editais/PE-024-2026",
+    "source_name": "Portal de Compras Municipais (Pregao Eletronico 024/2026)",
+    "published_at": "2026-04-29",
+    "captured_at": "2026-05-03T13:45:00",
+    "confidence": "high"
+  },
+  "business_context": {
+    "pain_detected": "Drenagem urbana sem telemetria; falhas de bombeamento detectadas tarde; alto custo de manutencao corretiva.",
+    "trigger": "Publicacao de edital de pregao eletronico com prazo de 15 dias",
+    "relevance_to_cetem": "Escopo cobre SCADA, telemetria, integracao com centro de operacoes - todas competencias CETEM. Setor publico demanda fornecedor com track record similar; CETEM tem cases.",
+    "related_solutions": [
+      "SCADA",
+      "telemetria",
+      "integracao TI/OT",
+      "monitoramento operacional"
+    ]
+  },
+  "commercial_action": {
+    "priority": "critical",
+    "recommended_next_step": "Decisao GO/NO-GO em 48h. Avaliar exigencias de habilitacao (atestados, cobertura geografica, capacidade tecnica). Se GO, montar consorcio se necessario e iniciar montagem da proposta. Cuidado com prazo curto (15 dias).",
+    "suggested_owner": "diretoria",
+    "suggested_sla_hours": 24
+  },
+  "decision_makers": [
+    {"role": "Pregoeiro", "area": "Compras", "reason": "conduz a sessao de licitacao"},
+    {"role": "Secretario de Obras", "area": "Obras Publicas", "reason": "gestor demandante; influencia especificacoes"},
+    {"role": "Engenheiro de Drenagem", "area": "Engenharia", "reason": "validador tecnico das especificacoes"}
+  ],
+  "score": {
+    "fit": 22,
+    "urgency": 25,
+    "business_value": 18,
+    "evidence_strength": 15,
+    "accessibility": 8,
+    "total": 88
+  },
+  "tags": [
+    "manus",
+    "inteligencia-mercado",
+    "edital",
+    "infraestrutura",
+    "scada",
+    "drenagem"
+  ]
+}
