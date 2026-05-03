@@ -26,3 +26,6 @@ data/
 .idea/
 *.swp
 .DS_Store
+
+# Relatorios gerados pelo smoke test (podem conter emails de teste e tokens mascarados)
+smoke_staging_report.txt
