@@ -398,3 +398,73 @@ def test_delete_task_not_found_returns_404(client):
     _, headers = _register_and_login(client)
     r = client.delete("/tasks/999", headers=headers)
     assert r.status_code == 404
+
+
+# =====================================================================
+# GET /users/me — retorna o user autenticado pelo JWT
+# =====================================================================
+
+
+def test_get_me_with_valid_token_returns_user(client):
+    uid, headers = _register_and_login(
+        client, name="me-test", email="me@example.com", password="pwd123"
+    )
+    r = client.get("/users/me", headers=headers)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["id"] == uid
+    assert body["email"] == "me@example.com"
+    assert body["name"] == "me-test"
+    assert body["is_active"] is True
+    # nunca expor hashed_password no payload publico
+    assert "hashed_password" not in body
+    assert "password" not in body
+
+
+def test_get_me_without_token_returns_401(client):
+    r = client.get("/users/me")
+    assert r.status_code == 401
+
+
+def test_get_me_via_api_v1_alias_works(client):
+    uid, headers = _register_and_login(
+        client, name="v1", email="v1@example.com", password="pwd123"
+    )
+    r = client.get("/api/v1/users/me", headers=headers)
+    assert r.status_code == 200
+    assert r.json()["id"] == uid
+
+
+# =====================================================================
+# GET /users/me — retorna o user autenticado pelo JWT
+# =====================================================================
+
+
+def test_get_me_with_valid_token_returns_user(client):
+    uid, headers = _register_and_login(
+        client, name="me-test", email="me@example.com", password="pwd123"
+    )
+    r = client.get("/users/me", headers=headers)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["id"] == uid
+    assert body["email"] == "me@example.com"
+    assert body["name"] == "me-test"
+    assert body["is_active"] is True
+    # nunca expor hashed_password no payload publico
+    assert "hashed_password" not in body
+    assert "password" not in body
+
+
+def test_get_me_without_token_returns_401(client):
+    r = client.get("/users/me")
+    assert r.status_code == 401
+
+
+def test_get_me_via_api_v1_alias_works(client):
+    uid, headers = _register_and_login(
+        client, name="v1", email="v1@example.com", password="pwd123"
+    )
+    r = client.get("/api/v1/users/me", headers=headers)
+    assert r.status_code == 200
+    assert r.json()["id"] == uid

@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_user
 from app.db.database import get_db
+from app.models.user import User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.services import user_service
 from app.services.user_service import EmailAlreadyExistsError, UserNotFoundError
@@ -27,6 +29,16 @@ def list_users(
     db: Session = Depends(get_db),
 ):
     return user_service.get_users(db, skip=skip, limit=limit)
+
+
+@router.get("/me", response_model=UserRead)
+def get_me(current_user: User = Depends(get_current_user)):
+    """Retorna o user autenticado pelo JWT (Bearer).
+
+    Esta rota DEVE vir antes de '/{user_id}' para que 'me' nao seja
+    capturado como path param do endpoint generico (e quebrar com 422).
+    """
+    return current_user
 
 
 @router.get("/{user_id}", response_model=UserRead)
