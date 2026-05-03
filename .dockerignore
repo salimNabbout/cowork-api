@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Testes (nao vao para producao)
+tests/
+
+# Dados locais
+data/
+app.db
+*.sqlite
+*.sqlite3
+
+# Docs e meta
+README.md
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+*.swp

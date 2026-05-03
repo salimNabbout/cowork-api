@@ -1,0 +1,26 @@
+# Render Blueprint - "deploy as code"
+# Cria automaticamente o web service + Postgres ao apontar este repo em
+# Render Dashboard > New > Blueprint.
+
+services:
+  - type: web
+    name: cowork-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true       # Render gera valor seguro no primeiro deploy
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cowork-db
+          property: connectionString
+
+databases:
+  - name: cowork-db
+    plan: free
+    databaseName: cowork
+    user: cowork
