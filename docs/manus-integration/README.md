@@ -170,6 +170,140 @@ Esse rascunho **não** está no código. Ele só serve como **âncora de design*
 
 Tudo isso vira tarefa nova quando o piloto provar valor.
 
+## Operação diária — Padrão A (atual)
+
+> Este é o padrão **manual humano-no-loop** que o piloto usa por padrão. Quando estabilizar, a evolução natural é o Padrão B (Manus chama API direto) ou o Padrão C (cron + GitHub Actions). Ambos vivem futuramente; nada precisa ser construído pra eles agora.
+
+### Fluxo do dia
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌──────────────────┐    ┌────────────┐
+│ Manus (UI)      │───►│ Você baixa JSONs │───►│ ingest script    │───►│ Painel MI  │
+│ scheduler diário│    │ → manus_inbox/   │    │ valida + POSTa   │    │ frontend   │
+└─────────────────┘    └──────────────────┘    └──────────────────┘    └────────────┘
+```
+
+### Setup uma vez
+
+1. **Criar/escolher user de integração no staging** — atualmente é `manus-integration-test+v1@example.com` (user_id `1`). Pra produção do piloto, recomendado registrar `manus-integration@cetem.com.br` via cadastro no frontend ou `POST /api/v1/users`. Depois trocar a senha pra um valor que só você sabe.
+
+2. **Anotar a senha em local seguro** (gerenciador de senhas, não em arquivo). Vai ser exportada como env var no início de cada execução.
+
+3. **Configurar o prompt diário do Manus** com diretiva detalhada — exemplo no fim desta seção.
+
+4. **Garantir que `manus_inbox/` existe no projeto local** — já vem versionada vazia com `.gitkeep`.
+
+### Rotina diária do analista CETEM (5-10 min)
+
+```cmd
+REM 1. Pegar os JSONs que o Manus gerou hoje, copiar pra:
+REM    C:\Users\salim\projetos\cowork-api\manus_inbox\
+REM    (pode ser drag-and-drop, robocopy, gh release dl, etc)
+
+REM 2. Rodar o ingest:
+cd C:\Users\salim\projetos\cowork-api
+set MANUS_TEST_EMAIL=manus-integration-test+v1@example.com
+set MANUS_TEST_PASSWORD=<sua-senha-do-user-de-integracao>
+python scripts/ingest_manus_inbox.py
+```
+
+Saída esperada:
+
+```
+Encontrados N arquivo(s) JSON em manus_inbox
+[auth] login como manus-integration-test+v1@example.com
+[auth] OK token=eyJ...XXXX user_id=1
+--- 2026-05-04-001.json ---
+  [OK 201] task_id=42 title='[OPORTUNIDADE] ...'
+--- 2026-05-04-002.json ---
+  [OK 201] task_id=43 title='[EDITAL] ...'
+...
+============================================================
+RESUMO
+============================================================
+  Total processado: N
+  Sucesso (201): N
+  Invalidos (validacao): 0
+  Falhas 4xx: 0
+  Falhas 5xx/network: 0
+  Pendentes no inbox: 0
+  Relatorio: manus_inbox/reports/2026-05-04T091203Z.txt
+```
+
+Depois, abrir `http://localhost:5173` → painel **Inteligência de Mercado** → revisar cards novos → atualizar status → marcar concluídos quando agir.
+
+### Tratamento de falhas no ingest
+
+| Cenário | O que o script faz | Você faz |
+|---|---|---|
+| JSON malformado | Marca `[INVALID]`, deixa no inbox | Conserta o JSON ou descarta o arquivo |
+| Validação contra `contract.md` falha | `[INVALID]`, deixa no inbox | Pede pro Manus regenerar com schema correto |
+| `HTTP 4xx` (não-401) | Deixa no inbox, marca no relatório | Investiga (validação backend, dado inválido), corrige |
+| `HTTP 401` | **ABORTA o lote** | Confirma que `MANUS_TEST_PASSWORD` está com a senha certa |
+| `HTTP 5xx` ou network | Deixa no inbox pra retry | Espera Render voltar (free dorme) e roda de novo |
+| `HTTP 201` (sucesso) | Move arquivo pra `processed/YYYY-MM-DD/` | Nada — sucesso |
+
+Re-rodar o script é seguro: arquivos com sucesso já saíram do inbox; só os que falharam serão re-tentados.
+
+### Sobre idempotência
+
+A API hoje **não dedupe**. Se um arquivo for processado por engano duas vezes (você reabriu de `processed/`, por exemplo), vai criar duas Tasks. Mitigação atual:
+
+- O script **move** os arquivos após 201 — não há como o mesmo run duplicar
+- Se você quiser re-importar manualmente, copia DE VOLTA pra `manus_inbox/` e roda — vai criar nova task
+- Quando virar `MarketInsight`, vamos adicionar `external_id = hash(evidence.url + signal_type + captured_at)` com índice unique no banco
+
+### Prompt diário sugerido pro Manus (uma vez, persistente)
+
+```
+Tarefa: Pesquisa diária de inteligência de mercado para a CETEM Tecnologia.
+
+Frequência: 1x ao dia, manhã (horário a definir).
+
+Setores prioritários (ajustar conforme estratégia):
+- Saneamento
+- Energia (cooperativas, distribuidoras, geração)
+
+Fontes-alvo (pesquise em todas, mas priorize as primeiras):
+1. Sala de imprensa de empresas-alvo (releases corporativos)
+2. Diários oficiais (federal, estaduais dos estados-foco) com filtros: SCADA,
+   automação, supervisão, monitoramento, telemetria
+3. Portais de licitação (ComprasNet, BLL, BEC)
+4. LinkedIn Jobs (filtrar por: "automação industrial", "SCADA", "TI/OT",
+   "data engineer industrial", senioridade pleno+ ou sênior)
+5. Sala de imprensa de concorrentes diretos (releases de novos contratos)
+
+Para cada sinal encontrado:
+1. Capture URL pública (sem login required)
+2. Estruture conforme docs/manus-integration/contract.md
+   (use os arquivos em docs/manus-integration/examples/ como referência)
+3. Salve como arquivo JSON em ~/manus_inbox/YYYY-MM-DD-NNN.json
+   onde NNN é sequencial 001, 002, ...
+
+Regras obrigatórias:
+- evidence.url é PÚBLICA (sem login)
+- company.name + company.sector preenchidos
+- evidence.confidence em {low, medium, high}
+- commercial_action.recommended_next_step é CONCRETO
+  (ex: "agendar reunião com Diretor X", não "estudar oportunidade")
+- decision_makers: pelo menos 1 perfil por cargo+área
+- score.total entre 0 e 100, somando 5 dimensões (fit, urgency, business_value,
+  evidence_strength, accessibility), pesos máximos 25/25/20/15/15
+
+Não faça:
+- Não inclua nome próprio de pessoas físicas (decisores por cargo + área)
+- Não colete CPF, telefone pessoal, dados de saúde, dados financeiros pessoais
+- Não envie a API diretamente — apenas gere os arquivos JSON
+- Não duplique sinais (mesma URL + mesmo signal_type) já enviados em dias anteriores
+
+Volume alvo: 5 a 20 sinais/dia. Se for ficar acima de 20, pare e me avise
+antes de continuar — pode estar com filtro muito largo.
+
+Quando terminar, me avise quantos arquivos gerou e em qual pasta.
+```
+
+Esse prompt vai junto na configuração do agente Manus uma vez. O scheduler dele dispara diariamente. Os arquivos ficam disponíveis pra você baixar e colocar em `manus_inbox/`.
+
 ## Rotina operacional sugerida
 
 Ciclo de uso, do sinal ao primeiro contato comercial:

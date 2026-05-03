@@ -30,3 +30,10 @@ data/
 # Relatorios gerados pelos smoke tests (podem conter emails de teste e tokens mascarados)
 smoke_staging_report.txt
 scripts/smoke_manus_report.txt
+
+# Inbox operacional do pipeline Manus (Padrao A)
+# Os arquivos JSON do dia, processados e relatorios NUNCA sao versionados.
+# A pasta manus_inbox/ existe no repo via .gitkeep + README.md.
+manus_inbox/*.json
+manus_inbox/processed/
+manus_inbox/reports/
